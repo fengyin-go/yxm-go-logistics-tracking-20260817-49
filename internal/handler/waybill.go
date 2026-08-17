@@ -43,7 +43,7 @@ func (s *Server) listWaybills(w http.ResponseWriter, r *http.Request) {
 	pp := httpx.ParsePagination(r, 20, s.maxPageSize())
 	filter := model.WaybillFilter{
 		Status:  r.URL.Query().Get("status"),
-		Keyword: r.URL.Query().Get("q"),
+		Keyword: r.URL.Query().Get("keyword"),
 	}
 	items, total, err := s.svc.ListWaybills(filter, pp.Page, pp.Size)
 	if err != nil {

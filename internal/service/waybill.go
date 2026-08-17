@@ -53,7 +53,7 @@ func (s *Service) ListWaybills(filter model.WaybillFilter, page, size int) ([]*m
 	all := s.store.ListWaybills()
 	matched := make([]*model.Waybill, 0, len(all))
 	for _, w := range all {
-		if filter.Match(w) && w.Receiver != "" {
+		if filter.Match(w) {
 			matched = append(matched, w)
 		}
 	}
