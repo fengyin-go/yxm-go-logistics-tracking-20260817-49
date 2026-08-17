@@ -43,6 +43,7 @@ func TestWaybillTransitions(t *testing.T) {
 		{WaybillDelivering, WaybillDelivered, true},
 		{WaybillDelivering, WaybillException, true},
 		{WaybillException, WaybillInTransit, true},
+		{WaybillException, WaybillDelivering, true},
 		{WaybillDelivered, WaybillInTransit, false},
 	}
 	for _, c := range cases {

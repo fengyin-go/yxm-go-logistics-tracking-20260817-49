@@ -77,9 +77,6 @@ func (s *Server) transitionWaybill(w http.ResponseWriter, r *http.Request) {
 		httpx.BadRequest(w, "请求体解析失败: "+err.Error())
 		return
 	}
-	if req.Status == model.WaybillException {
-		req.Description = ""
-	}
 	wb, err := s.svc.Transition(r.PathValue("id"), req.Status, req.StationID, req.Description)
 	if err != nil {
 		writeServiceError(w, err)
