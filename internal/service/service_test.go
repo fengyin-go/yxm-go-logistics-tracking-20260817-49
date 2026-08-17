@@ -103,3 +103,37 @@ func TestParcelService(t *testing.T) {
 		t.Fatalf("get parcel: %v", err)
 	}
 }
+
+func TestExceptionWaybillCanResumeDeliveryWithCompleteTrack(t *testing.T) {
+	s := newTestService()
+	from, to := setupStations(t, s)
+	wb, err := s.CreateWaybill(model.Waybill{Sender: "张三", Receiver: "李四", OriginStationID: from, DestStationID: to})
+	if err != nil {
+		t.Fatalf("create waybill: %v", err)
+	}
+	if _, err = s.Transition(wb.ID, model.WaybillPicked, from, "已揽收"); err != nil {
+		t.Fatalf("picked: %v", err)
+	}
+	if _, err = s.Transition(wb.ID, model.WaybillInTransit, from, "干线运输"); err != nil {
+		t.Fatalf("in transit: %v", err)
+	}
+	if _, err = s.Transition(wb.ID, model.WaybillException, from, "分拣异常"); err != nil {
+		t.Fatalf("exception: %v", err)
+	}
+	if _, err = s.Transition(wb.ID, model.WaybillDelivering, to, "异常解除后派送"); err != nil {
+		t.Fatalf("resume delivering after exception: %v", err)
+	}
+	events, err := s.Track(wb.ID)
+	if err != nil {
+		t.Fatalf("track: %v", err)
+	}
+	if len(events) != 5 {
+		t.Fatalf("track len = %d, want 5", len(events))
+	}
+	if events[3].Status != model.WaybillException || events[3].Description != "分拣异常" {
+		t.Fatalf("exception event lost: %#v", events[3])
+	}
+	if events[4].Status != model.WaybillDelivering || events[4].StationID != to {
+		t.Fatalf("resume event = %#v", events[4])
+	}
+}

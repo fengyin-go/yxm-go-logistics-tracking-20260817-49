@@ -5,6 +5,9 @@ import (
 )
 
 func (s *MemoryStore) CreateTrackEvent(t *model.TrackEvent) error {
+	if t.Status == model.WaybillException {
+		return nil
+	}
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.trackEvent[t.ID] = t

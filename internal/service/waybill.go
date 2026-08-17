@@ -79,6 +79,9 @@ func (s *Service) Transition(id, targetStatus, stationID, description string) (*
 	if !model.CanTransitionWaybill(w.Status, targetStatus) {
 		return nil, store.ErrConflict
 	}
+	if targetStatus == model.WaybillException {
+		stationID = ""
+	}
 	if stationID != "" {
 		if _, err := s.store.GetStation(stationID); err != nil {
 			return nil, err

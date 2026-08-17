@@ -20,7 +20,7 @@ var waybillTransitions = map[string]map[string]bool{
 	WaybillPicked:     {WaybillInTransit: true},
 	WaybillInTransit:  {WaybillDelivering: true, WaybillException: true},
 	WaybillDelivering: {WaybillDelivered: true, WaybillException: true},
-	WaybillException:  {WaybillInTransit: true, WaybillDelivering: true},
+	WaybillException:  {WaybillInTransit: true},
 }
 
 // CanTransitionWaybill 判断运单状态流转是否合法。
