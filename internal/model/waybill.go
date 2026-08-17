@@ -82,11 +82,11 @@ type WaybillFilter struct {
 }
 
 func (f WaybillFilter) Match(w *Waybill) bool {
-	if f.Status != "" && w.Status != f.Status {
+	if f.Status != "" && w.Status != strings.TrimSpace(f.Status) {
 		return false
 	}
 	if f.Keyword != "" {
-		k := strings.ToLower(strings.TrimSpace(f.Keyword))
+		k := strings.ToLower(f.Keyword)
 		if k != "" && !strings.Contains(strings.ToLower(w.TrackingNo), k) &&
 			!strings.Contains(strings.ToLower(w.Receiver), k) {
 			return false
