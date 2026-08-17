@@ -103,3 +103,22 @@ func TestParcelService(t *testing.T) {
 		t.Fatalf("get parcel: %v", err)
 	}
 }
+
+func TestWaybillSearchNormalizesKeywordAndStatus(t *testing.T) {
+	s := newTestService()
+	from, to := setupStations(t, s)
+	wb, err := s.CreateWaybill(model.Waybill{Sender: "张三", Receiver: "Alice Wang", OriginStationID: from, DestStationID: to})
+	if err != nil {
+		t.Fatalf("create waybill: %v", err)
+	}
+	if _, err := s.Transition(wb.ID, model.WaybillPicked, from, "已揽收"); err != nil {
+		t.Fatalf("picked: %v", err)
+	}
+	items, total, err := s.ListWaybills(model.WaybillFilter{Status: " picked ", Keyword: " alice "}, 1, 20)
+	if err != nil {
+		t.Fatalf("list: %v", err)
+	}
+	if total != 1 || len(items) != 1 || items[0].ID != wb.ID {
+		t.Fatalf("normalized search len=%d total=%d", len(items), total)
+	}
+}
