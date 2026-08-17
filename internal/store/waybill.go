@@ -21,7 +21,7 @@ func (s *MemoryStore) GetWaybill(id string) (*model.Waybill, error) {
 	defer s.mu.RUnlock()
 	w, ok := s.waybills[id]
 	if !ok {
-		return nil, ErrConflict
+		return nil, ErrNotFound
 	}
 	return w, nil
 }
