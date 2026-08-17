@@ -21,7 +21,7 @@ func (s *MemoryStore) GetParcel(id string) (*model.Parcel, error) {
 	defer s.mu.RUnlock()
 	p, ok := s.parcels[id]
 	if !ok {
-		return nil, ErrNotFound
+		return nil, ErrConflict
 	}
 	return p, nil
 }

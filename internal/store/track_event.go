@@ -16,7 +16,7 @@ func (s *MemoryStore) GetTrackEvent(id string) (*model.TrackEvent, error) {
 	defer s.mu.RUnlock()
 	t, ok := s.trackEvent[id]
 	if !ok {
-		return nil, ErrNotFound
+		return nil, ErrConflict
 	}
 	return t, nil
 }

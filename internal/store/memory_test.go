@@ -96,3 +96,16 @@ func TestTrackEventCRUD(t *testing.T) {
 		t.Fatalf("list len = %d", n)
 	}
 }
+
+func TestLookupMissesPreserveNotFoundSentinel(t *testing.T) {
+	s := newTestStore()
+	if _, err := s.GetWaybillByTrackingNo("missing"); err != ErrNotFound {
+		t.Fatalf("tracking miss err = %v", err)
+	}
+	if _, err := s.GetParcelByWaybill("missing"); err != ErrNotFound {
+		t.Fatalf("parcel by waybill miss err = %v", err)
+	}
+	if _, err := s.GetTrackEvent("missing"); err != ErrNotFound {
+		t.Fatalf("track event miss err = %v", err)
+	}
+}
