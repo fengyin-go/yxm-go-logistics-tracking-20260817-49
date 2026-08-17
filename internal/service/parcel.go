@@ -33,6 +33,7 @@ func (s *Service) GetParcel(id string) (*model.Parcel, error) {
 }
 
 func (s *Service) ListParcels(page, size int) ([]*model.Parcel, int, error) {
+	page, size = normalizePagination(page, size, 20, s.cfg.MaxPageSize)
 	all := s.store.ListParcels()
 	sort.Slice(all, func(i, j int) bool { return all[i].CreatedAt.After(all[j].CreatedAt) })
 	total := len(all)
@@ -52,6 +53,7 @@ func (s *Service) DeleteParcel(id string) error {
 }
 
 func (s *Service) ListTrackEvents(filter model.TrackEventFilter, page, size int) ([]*model.TrackEvent, int, error) {
+	page, size = normalizePagination(page, size, 20, s.cfg.MaxPageSize)
 	all := s.store.ListTrackEvents()
 	matched := make([]*model.TrackEvent, 0, len(all))
 	for _, t := range all {

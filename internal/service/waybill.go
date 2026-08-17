@@ -50,6 +50,7 @@ func (s *Service) GetWaybillByTrackingNo(no string) (*model.Waybill, error) {
 }
 
 func (s *Service) ListWaybills(filter model.WaybillFilter, page, size int) ([]*model.Waybill, int, error) {
+	page, size = normalizePagination(page, size, 20, s.cfg.MaxPageSize)
 	all := s.store.ListWaybills()
 	matched := make([]*model.Waybill, 0, len(all))
 	for _, w := range all {
