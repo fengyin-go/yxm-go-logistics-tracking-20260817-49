@@ -103,3 +103,34 @@ func TestParcelService(t *testing.T) {
 		t.Fatalf("get parcel: %v", err)
 	}
 }
+
+func TestListMethodsClampPaginationBounds(t *testing.T) {
+	s := newTestService()
+	from, to := setupStations(t, s)
+	for i := 0; i < 3; i++ {
+		if _, err := s.CreateWaybill(model.Waybill{Sender: "张三", Receiver: "李四", OriginStationID: from, DestStationID: to}); err != nil {
+			t.Fatalf("create waybill %d: %v", i, err)
+		}
+	}
+	items, total, err := s.ListWaybills(model.WaybillFilter{}, 0, 0)
+	if err != nil {
+		t.Fatalf("list waybills: %v", err)
+	}
+	if total != 3 || len(items) != 3 {
+		t.Fatalf("page 0 size 0 returned len=%d total=%d", len(items), total)
+	}
+	parcels, total, err := s.ListParcels(-1, -5)
+	if err != nil {
+		t.Fatalf("list parcels: %v", err)
+	}
+	if total != 0 || len(parcels) != 0 {
+		t.Fatalf("empty parcels len=%d total=%d", len(parcels), total)
+	}
+	events, total, err := s.ListTrackEvents(model.TrackEventFilter{}, -2, 0)
+	if err != nil {
+		t.Fatalf("list track events: %v", err)
+	}
+	if total != 3 || len(events) != 3 {
+		t.Fatalf("track events len=%d total=%d", len(events), total)
+	}
+}
