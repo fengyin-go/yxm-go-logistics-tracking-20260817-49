@@ -33,14 +33,7 @@ func (s *Service) ListStations(page, size int) ([]*model.Station, int, error) {
 	all := s.store.ListStations()
 	sort.Slice(all, func(i, j int) bool { return all[i].CreatedAt.After(all[j].CreatedAt) })
 	total := len(all)
-	start := (page - 1) * size
-	if start >= total {
-		return []*model.Station{}, total, nil
-	}
-	end := start + size
-	if end > total {
-		end = total
-	}
+	start, end := pageBounds(total, page, size)
 	return all[start:end], total, nil
 }
 

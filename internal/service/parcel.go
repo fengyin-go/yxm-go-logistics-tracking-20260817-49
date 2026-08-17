@@ -36,14 +36,7 @@ func (s *Service) ListParcels(page, size int) ([]*model.Parcel, int, error) {
 	all := s.store.ListParcels()
 	sort.Slice(all, func(i, j int) bool { return all[i].CreatedAt.After(all[j].CreatedAt) })
 	total := len(all)
-	start := (page - 1) * size
-	if start >= total {
-		return []*model.Parcel{}, total, nil
-	}
-	end := start + size
-	if end > total {
-		end = total
-	}
+	start, end := pageBounds(total, page, size)
 	return all[start:end], total, nil
 }
 
@@ -61,13 +54,6 @@ func (s *Service) ListTrackEvents(filter model.TrackEventFilter, page, size int)
 	}
 	sort.Slice(matched, func(i, j int) bool { return matched[i].CreatedAt.After(matched[j].CreatedAt) })
 	total := len(matched)
-	start := (page - 1) * size
-	if start >= total {
-		return []*model.TrackEvent{}, total, nil
-	}
-	end := start + size
-	if end > total {
-		end = total
-	}
+	start, end := pageBounds(total, page, size)
 	return matched[start:end], total, nil
 }

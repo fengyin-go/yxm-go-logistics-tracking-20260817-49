@@ -59,14 +59,7 @@ func (s *Service) ListWaybills(filter model.WaybillFilter, page, size int) ([]*m
 	}
 	sort.Slice(matched, func(i, j int) bool { return matched[i].CreatedAt.After(matched[j].CreatedAt) })
 	total := len(matched)
-	start := (page - 1) * size
-	if start >= total {
-		return []*model.Waybill{}, total, nil
-	}
-	end := start + size
-	if end > total {
-		end = total
-	}
+	start, end := pageBounds(total, page, size)
 	return matched[start:end], total, nil
 }
 

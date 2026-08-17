@@ -80,11 +80,30 @@ type PageParams struct {
 	Size int
 }
 
+// 分页默认值：当 defaultSize/maxSize 被调用方误传为非正数时回退使用，
+// 确保 ParsePagination 永不返回 page<1 或 size<1 的非法分页参数。
+const (
+	defaultPageSize = 20
+	maxPageSize     = 100
+)
+
+// ParsePagination 从查询参数 page/size 解析分页入参，并对非法值兜底：
+//   - page/size 为空、非数字、0 或负数时回退为默认值；
+//   - defaultSize/maxSize 被调用方误传为非正数时回退到上方默认值；
+//   - size 超过 maxSize 时截断为 maxSize。
+//
+// 最终保证 page >= 1 且 1 <= size <= maxSize。
 func ParsePagination(r *http.Request, defaultSize, maxSize int) PageParams {
 	page, _ := strconv.Atoi(r.URL.Query().Get("page"))
 	size, _ := strconv.Atoi(r.URL.Query().Get("size"))
 	if page < 1 {
 		page = 1
+	}
+	if defaultSize < 1 {
+		defaultSize = defaultPageSize
+	}
+	if maxSize < 1 {
+		maxSize = maxPageSize
 	}
 	if size < 1 {
 		size = defaultSize
