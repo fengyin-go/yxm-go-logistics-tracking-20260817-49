@@ -96,3 +96,23 @@ func TestTrackEventCRUD(t *testing.T) {
 		t.Fatalf("list len = %d", n)
 	}
 }
+
+func TestParcelListDoesNotExposeStoredPointers(t *testing.T) {
+	s := newTestStore()
+	p := &model.Parcel{ID: "p1", WaybillID: "w1", Description: "电子产品", Weight: 1.5}
+	if err := s.CreateParcel(p); err != nil {
+		t.Fatalf("create: %v", err)
+	}
+	items := s.ListParcels()
+	if len(items) != 1 {
+		t.Fatalf("list len = %d", len(items))
+	}
+	items[0].Description = "被外部污染"
+	got, err := s.GetParcel("p1")
+	if err != nil {
+		t.Fatalf("get: %v", err)
+	}
+	if got.Description != "电子产品" {
+		t.Fatalf("stored parcel was mutated through list result: %q", got.Description)
+	}
+}
