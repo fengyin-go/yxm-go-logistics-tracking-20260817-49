@@ -25,7 +25,7 @@ func (s *Service) CreateParcel(input model.Parcel) (*model.Parcel, error) {
 	if err := s.store.CreateParcel(p); err != nil {
 		return nil, err
 	}
-	return p, nil
+	return p.Clone(), nil
 }
 
 func (s *Service) GetParcel(id string) (*model.Parcel, error) {

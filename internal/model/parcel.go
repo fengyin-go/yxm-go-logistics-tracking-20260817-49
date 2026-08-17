@@ -24,3 +24,11 @@ func (p *Parcel) Validate() error {
 	}
 	return nil
 }
+
+func (p *Parcel) Clone() *Parcel {
+	if p == nil {
+		return nil
+	}
+	cp := *p
+	return &cp
+}

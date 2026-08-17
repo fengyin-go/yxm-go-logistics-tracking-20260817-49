@@ -44,6 +44,9 @@ func (s *Server) listParcels(w http.ResponseWriter, r *http.Request) {
 		writeServiceError(w, err)
 		return
 	}
+	for i, item := range items {
+		items[i] = item.Clone()
+	}
 	httpx.OK(w, httpx.PageResult{
 		Items:      items,
 		Pagination: httpx.Pagination{Page: pp.Page, Size: pp.Size, Total: total},

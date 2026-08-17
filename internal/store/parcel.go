@@ -12,7 +12,7 @@ func (s *MemoryStore) CreateParcel(p *model.Parcel) error {
 			return ErrConflict
 		}
 	}
-	s.parcels[p.ID] = p
+	s.parcels[p.ID] = p.Clone()
 	return nil
 }
 
@@ -23,7 +23,7 @@ func (s *MemoryStore) GetParcel(id string) (*model.Parcel, error) {
 	if !ok {
 		return nil, ErrNotFound
 	}
-	return p, nil
+	return p.Clone(), nil
 }
 
 func (s *MemoryStore) GetParcelByWaybill(waybillID string) (*model.Parcel, error) {
@@ -42,7 +42,7 @@ func (s *MemoryStore) ListParcels() []*model.Parcel {
 	defer s.mu.RUnlock()
 	list := make([]*model.Parcel, 0, len(s.parcels))
 	for _, p := range s.parcels {
-		list = append(list, p)
+		list = append(list, p.Clone())
 	}
 	return list
 }
