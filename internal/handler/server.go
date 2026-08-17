@@ -65,7 +65,7 @@ func writeServiceError(w http.ResponseWriter, err error) {
 	case model.IsValidationError(err):
 		httpx.BadRequest(w, err.Error())
 	case errors.Is(err, store.ErrNotFound):
-		httpx.Conflict(w, err.Error())
+		httpx.NotFound(w, err.Error())
 	case errors.Is(err, store.ErrConflict):
 		httpx.Conflict(w, err.Error())
 	default:
